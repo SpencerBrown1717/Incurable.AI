@@ -3,10 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Incurable? - Rewriting the Future of "Incurable" Diseases</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes slide {
+            from { transform: translateX(0); }
+            to { transform: translateX(4px); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out;
+        }
+        .dna-bg {
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(16, 185, 129, 0.1) 2px, rgba(16, 185, 129, 0.1) 4px);
+            animation: slide 20s linear infinite;
+        }
+    </style>
 </head>
-<body>
-    <h1>Hello, World!</h1>
+<body class="min-h-screen bg-gradient-to-br from-black via-gray-950 to-black text-white overflow-hidden">
+    <!-- Animated DNA Background -->
+    <div class="fixed inset-0 opacity-5">
+        <div class="absolute inset-0 dna-bg"></div>
+    </div>
+
+    <!-- Floating Particles -->
+    <div class="fixed inset-0 pointer-events-none" id="particles"></div>
+
+    <!-- Navigation -->
+    <nav class="relative z-10 border-b border-emerald-500/10 backdrop-blur-xl bg-black/30">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="dna" class="w-8 h-8 text-emerald-500"></i>
+                    <span class="text-2xl font-light tracking-wider">Incurable<span class="text-emerald-500">?</span></span>
+                </div>
+                <div class="flex items-center space-x-8">
+                    <a href="#" class="text-gray-400 hover:text-emerald-400 transition-colors duration-300">Research</a>
+                    <a href="#" class="text-gray-400 hover:text-emerald-400 transition-colors duration-300">About</a>
+                    <a href="#" class="text-gray-400 hover:text-emerald-400 transition-colors duration-300">Impact</a>
+                    <button class="px-6 py-2 bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-full hover:from-emerald-500 hover:to-emerald-400 transition-all duration-300 shadow-lg shadow-emerald-500/25">
+                        Donate Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="relative z-10 max-w-7xl mx-auto px-6 pt-20 pb-12">
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center space-x-2 mb-6 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                <i data-lucide="sparkles" class="w-4 h-4 text-emerald-400"></i>
+                <span class="text-sm text-emerald-400">CRISPR-Enabled Research Initiative</span>
+            </div>
+            <h1 class="text-6xl font-thin mb-4 tracking-tight">
+                Rewriting the Future of
+                <span class="block text-7xl font-extralight bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent mt-2">
+                    "Incurable" Diseases
+                </span>
+            </h1>
+            <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                Join the revolution in medical research. Every contribution accelerates breakthrough therapies 
+                through cutting-edge genetic engineering and biotechnology.
+            </p>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="grid grid-cols-3 gap-8 mb-16 max-w-4xl mx-auto">
+            <div class="text-center p-6 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-transparent border border-emerald-500/10">
+                <div class="text-3xl font-light text-emerald-400 mb-2">$98.5M</div>
+                <div class="text-sm text-gray-500">Total Raised</div>
+            </div>
+            <div class="text-center p-6 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-transparent border border-emerald-500/10">
+                <div class="text-3xl font-light text-emerald-400 mb-2">486K</div>
+                <div class="text-sm text-gray-500">Global Donors</div>
+            </div>
+            <div class="text-center p-6 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-transparent border border-emerald-500/10">
+                <div class="text-3xl font-light text-emerald-400 mb-2">23</div>
+                <div class="text-sm text-gray-500">Trials Started</div>
+            </div>
+        </div>
+
+        <!-- Disease Leaderboard -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-light mb-8 flex items-center">
+                <i data-lucide="trending-up" class="w-6 h-6 text-emerald-500 mr-3"></i>
+                Research Funding Leaderboard
+            </h2>
+            
+            <div class="space-y-4" id="disease-list"></div>
+        </div>
+    </div>
+
+    <script>
+        const diseases = [
+            { id: 1, name: "HIV/AIDS", icon: "shield", raised: 12500000, goal: 50000000, donors: 45230, color: "from-emerald-500/20 to-teal-500/10", description: "Advancing retroviral research and immune system therapies" },
+            { id: 2, name: "Polio", icon: "activity", raised: 8750000, goal: 25000000, donors: 28450, color: "from-green-500/20 to-emerald-500/10", description: "Developing next-generation vaccines and treatments" },
+            { id: 3, name: "Ebola", icon: "zap", raised: 6200000, goal: 20000000, donors: 15670, color: "from-lime-500/20 to-green-500/10", description: "Rapid response systems and antiviral development" },
+            { id: 4, name: "Schizophrenia", icon: "brain", raised: 9100000, goal: 30000000, donors: 31200, color: "from-teal-500/20 to-cyan-500/10", description: "Neurological research and precision psychiatry" },
+            { id: 5, name: "Parkinson's", icon: "activity", raised: 11300000, goal: 40000000, donors: 38900, color: "from-emerald-600/20 to-green-400/10", description: "Dopamine therapies and neural regeneration" },
+            { id: 6, name: "Alien Hand Syndrome", icon: "brain", raised: 2100000, goal: 10000000, donors: 8900, color: "from-green-400/20 to-lime-400/10", description: "Understanding rare neurological pathways" },
+            { id: 7, name: "Asthma", icon: "activity", raised: 7800000, goal: 25000000, donors: 42100, color: "from-teal-400/20 to-emerald-400/10", description: "Revolutionary respiratory treatments" },
+            { id: 8, name: "Arthritis", icon: "shield", raised: 8900000, goal: 30000000, donors: 35600, color: "from-lime-600/20 to-green-500/10", description: "Joint regeneration and anti-inflammatory research" },
+            { id: 9, name: "Cancer", icon: "dna", raised: 25600000, goal: 100000000, donors: 89700, color: "from-emerald-600/20 to-teal-600/10", description: "CRISPR therapies and immunotherapy advancement" },
+            { id: 10, name: "Common Cold & Flu", icon: "shield", raised: 5400000, goal: 20000000, donors: 52300, color: "from-green-500/20 to-lime-500/10", description: "Universal vaccine development" }
+        ];
+
+        let selectedDisease = null;
+        let animatedNumbers = {};
+
+        // Create floating particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'absolute w-1 h-1 bg-emerald-500/20 rounded-full';
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            particle.style.animation = `float ${10 + Math.random() * 20}s ease-in-out infinite`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            particlesContainer.appendChild(particle);
+        }
+
+        const formatNumber = (num) => {
+            if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+            if (num >= 1000) return `${(num / 1000).toFixed(0)}K`;
+            return num.toString();
+        };
+
+        const calculateProgress = (raised, goal) => (raised / goal) * 100;
+
+        // Animate numbers
+        diseases.forEach(disease => {
+            let current = 0;
+            const increment = disease.raised / 100;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= disease.raised) {
+                    current = disease.raised;
+                    clearInterval(timer);
+                }
+                animatedNumbers[disease.id] = Math.floor(current);
+                renderDiseases();
+            }, 20);
+        });
+
+        function toggleDisease(id) {
+            selectedDisease = selectedDisease === id ? null : id;
+            renderDiseases();
+        }
+
+        function renderDiseases() {
+            const container = document.getElementById('disease-list');
+            const sortedDiseases = [...diseases].sort((a, b) => b.raised - a.raised);
+            
+            container.innerHTML = sortedDiseases.map((disease, index) => {
+                const progress = calculateProgress(disease.raised, disease.goal);
+                const currentValue = animatedNumbers[disease.id] || 0;
+                const isSelected = selectedDisease === disease.id;
+                
+                return `
+                    <div
+                        class="relative group cursor-pointer transition-all duration-500 ${isSelected ? 'scale-[1.02]' : 'hover:scale-[1.01]'}"
+                        onclick="toggleDisease(${disease.id})"
+                    >
+                        <div class="relative overflow-hidden rounded-2xl border ${
+                            isSelected 
+                                ? 'border-emerald-400/40 shadow-2xl shadow-emerald-500/20' 
+                                : 'border-emerald-500/10 hover:border-emerald-500/20'
+                        } bg-gradient-to-r ${disease.color} backdrop-blur-sm transition-all duration-500">
+                            
+                            ${index < 3 ? `
+                                <div class="absolute top-4 left-4 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                                    index === 0 ? 'bg-gradient-to-br from-yellow-400 to-amber-600 text-black' :
+                                    index === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-500 text-black' :
+                                    'bg-gradient-to-br from-orange-400 to-orange-600 text-white'
+                                }">
+                                    ${index + 1}
+                                </div>
+                            ` : ''}
+
+                            <div class="p-6">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-400/10 flex items-center justify-center">
+                                            <i data-lucide="${disease.icon}" class="w-6 h-6 text-emerald-400"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-light text-white">${disease.name}</h3>
+                                            <p class="text-sm text-gray-400 mt-1">${disease.description}</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-2xl font-light text-emerald-400">
+                                            $${formatNumber(currentValue)}
+                                        </div>
+                                        <div class="text-sm text-gray-500">
+                                            of $${formatNumber(disease.goal)}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="relative h-2 bg-black/30 rounded-full overflow-hidden mb-4">
+                                    <div 
+                                        class="absolute inset-y-0 left-0 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-1000 ease-out"
+                                        style="width: ${progress}%"
+                                    >
+                                        <div class="absolute inset-0 bg-white/20 animate-pulse"></div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between text-sm">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex items-center text-gray-400">
+                                            <i data-lucide="users" class="w-4 h-4 mr-1"></i>
+                                            ${formatNumber(disease.donors)} donors
+                                        </div>
+                                        <div class="text-gray-400">
+                                            ${progress.toFixed(1)}% funded
+                                        </div>
+                                    </div>
+                                    <i data-lucide="chevron-right" class="w-5 h-5 text-emerald-400 transition-transform duration-300 ${isSelected ? 'rotate-90' : ''}"></i>
+                                </div>
+
+                                ${isSelected ? `
+                                    <div class="mt-6 pt-6 border-t border-emerald-500/10 space-y-4 animate-fadeIn">
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <button class="px-4 py-3 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-xl border border-emerald-500/20 transition-all duration-300">
+                                                Quick Donate $100
+                                            </button>
+                                            <button class="px-4 py-3 bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-xl hover:from-emerald-500 hover:to-emerald-400 transition-all duration-300">
+                                                Custom Amount
+                                            </button>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Initialize Lucide icons
+            lucide.createIcons();
+        }
+
+        // Initial render
+        renderDiseases();
+
+        // Make toggleDisease available globally
+        window.toggleDisease = toggleDisease;
+    </script>
 </body>
 </html>
-
